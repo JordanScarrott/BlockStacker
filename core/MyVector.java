@@ -1,24 +1,26 @@
 package core;
 
-import com.sun.javafx.geom.Vec2f;
-
 import java.util.Random;
 
 /**
  * A 2-dimensional, single-precision, floating-point vector with operator methods
  *
  * @author Jordan Scarrott
- * @see Vec2f
  */
-public class MyVector extends Vec2f {
+public class MyVector {
+
+    public float x;
+    public float y;
 
     // Constructors
     public MyVector() {
-        super(0, 0);
+        this.x = 0;
+        this.y = 0;
     }
 
     public MyVector(float vx, float vy) {
-        super(vx, vy);
+        this.x = vx;
+        this.y = vy;
     }
 
     /**
@@ -105,12 +107,37 @@ public class MyVector extends Vec2f {
     /**
      * Returns the square of the distance between two points.
      *
+     * @param x1 the x coordinate of the first point
+     * @param y1 the y coordinate of the first point
+     * @param x2 the x coordinate of the second point
+     * @param y2 the y coordinate of the second point
+     * @return the square of the distance between the two points
+     */
+    public static float distanceSq(float x1, float y1, float x2, float y2) {
+        float dx = x1 - x2;
+        float dy = y1 - y2;
+        return dx * dx + dy * dy;
+    }
+
+    /**
+     * Returns the square of the distance between two points.
+     *
      * @param mv1 the first core.MyVector
      * @param mv2 the second core.MyVector
      * @return the square of the distance between the two MyVectors
      */
     public static float distanceSq(MyVector mv1, MyVector mv2) {
         return distanceSq(mv1.x, mv1.y, mv2.x, mv2.y);
+    }
+
+    /**
+     * Sets the components, x and y, of this <code>core.MyVector</code>
+     * @param x the new x component
+     * @param y the new y component
+     */
+    public void set(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -375,9 +402,9 @@ public class MyVector extends Vec2f {
 
     /**
      * Returns a <code>String</code> that represents the value
-     * of this <code>Vec2d</code>.
+     * of this <code>MyVector</code>.
      *
-     * @return a string representation of this <code>Vec2d</code>.
+     * @return a string representation of this <code>MyVector</code>.
      */
     @Override
     public String toString() {
