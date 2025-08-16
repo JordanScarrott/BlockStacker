@@ -1,4 +1,4 @@
-# Java Tetris Clone
+# Block Stacker
 
 This is a simple Tetris game implemented in Java using the Swing library.
 
