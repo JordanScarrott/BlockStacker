@@ -1,35 +1,52 @@
 package com.jordan.blockstacker;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-/**
- * Created by Jordan on 2016-11-29.
- */
-public class Main {
+public class Main extends JFrame {
 
-    public static void main(String[] args) {
-        Display display = new Display(650, 650);
-        display.setSize(650, 650);
-        display.setResizable(false);
-        display.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        display.setLocationRelativeTo(null);
-        display.setVisible(true);
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+    private MainMenu mainMenu;
+    private Display display;
 
+    public Main() {
+        super("BlockStacker");
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
 
-/*        MyVector blockLocation = new MyVector(1, 2);
-        MyVector shapeLocation = new MyVector(1, 1);
-        MyVector temp;
-        for(int i = 0; i < 4; i++) {
-            temp = blockLocation.sub(shapeLocation);
-            temp.rotate90();
-            System.out.println("temp: " + temp);
+        // Start Game Listener
+        ActionListener startListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainPanel, "game");
+                display.requestFocusInWindow();
+                display.startGame();
+            }
+        };
 
-            blockLocation.set(MyVector.add(temp, shapeLocation));
-            System.out.println("blockLocation: " + blockLocation);
+        mainMenu = new MainMenu(startListener);
+        display = new Display(650, 650);
 
-            System.out.println();
-        }*/
+        mainPanel.add(mainMenu, "menu");
+        mainPanel.add(display, "game");
 
+        add(mainPanel);
+
+        cardLayout.show(mainPanel, "menu");
     }
 
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Main main = new Main();
+            main.setSize(650, 650);
+            main.setResizable(false);
+            main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            main.setLocationRelativeTo(null);
+            main.setVisible(true);
+        });
+    }
 }
