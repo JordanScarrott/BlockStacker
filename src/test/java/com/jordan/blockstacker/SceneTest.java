@@ -129,6 +129,32 @@ public class SceneTest {
         }
 
         @Test
+        @DisplayName("should increase score when a line is cleared")
+        void testScoreIncreasesOnLineClear() {
+            Block[][] grid = scene.getAllBlocks();
+            int rowToClear = GRID_SIZE - 1;
+
+            // Fill the row
+            for (int i = 0; i < GRID_SIZE; i++) {
+                grid[i][rowToClear] = new Block(i, rowToClear);
+            }
+
+            // The shape starts at (3,0). It will fall down.
+            // The default T-shape's lowest part is at y=1 relative to its location.
+            // It needs to step 8 times for its location to become y=8.
+            // At that point, its lowest block is at y=9.
+            for (int i = 0; i < 8; i++) {
+                scene.step();
+            }
+
+            // The next step will attempt to move to y=9, which is blocked.
+            // This will lock the piece and trigger the line clear.
+            scene.step();
+
+            assertEquals(10, scene.getScore(), "Score should be 10 after clearing one line.");
+        }
+
+        @Test
         @DisplayName("should clear multiple lines at once")
         void testClearMultipleLines() {
             Block[][] grid = scene.getAllBlocks();
