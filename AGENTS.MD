@@ -17,6 +17,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+**Add Score Counter**
+ * **Task**: Add an in-game score counter.
+ * **Description**: Added a score counter to the game. The score increases by 10 points for each cleared line. The score is displayed in the top-left corner of the screen. Affected files: `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Display.java`.
+ * **Status**: Completed
+---
 **Create Main Menu**
  * **Task**: Create a main menu with "Start" and "Exit" options.
  * **Description**: Created a `MainMenu` class to display the menu. Refactored `Display` from a `JFrame` to a `JPanel` and updated `Main` to use a `CardLayout` to switch between the menu and the game. Affected files: `src/main/java/com/jordan/blockstacker/Main.java`, `src/main/java/com/jordan/blockstacker/Display.java`, `src/main/java/com/jordan/blockstacker/MainMenu.java`.

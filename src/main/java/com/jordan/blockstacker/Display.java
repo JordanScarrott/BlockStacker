@@ -120,5 +120,8 @@ public class Display extends JPanel {
         for (int i = 0; i < blocksPerDim; i++) {
             g.drawLine(0, i * blockHeight, width, i * blockHeight);
         }
+
+        g.setColor(Color.BLACK);
+        g.drawString("Score: " + scene.getScore(), 10, 20);
     }
 }

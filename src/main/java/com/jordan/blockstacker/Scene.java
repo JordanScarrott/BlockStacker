@@ -16,6 +16,8 @@ public class Scene {
     private Block[][] allBlocks;
 //    private ArrayList<Block>
 
+    private int score = 0;
+
     private ArrayList<Shape> activeShapes;
 
     private Random rand = new Random();
@@ -65,6 +67,7 @@ public class Scene {
                         for(int k = 0; k < blocksPerDim; k++) {
                             allBlocks[k][j] = null;
                         }
+                        score += 10;
                         System.out.println("Row " + j + " cleared!");
                         // Move Blocks down
                         moveBlocksDown(j);
@@ -145,5 +148,9 @@ public class Scene {
 
     public Block[][] getAllBlocks() {
         return allBlocks;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
