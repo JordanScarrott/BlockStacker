@@ -19,6 +19,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
 ---
 
 ---
+**Add Gradle Support**
+ * **Task**: Add a complete Gradle build system to the project.
+ * **Description**: Restructured the project to follow the standard Gradle layout, with sources in `src/main/java`. Created a `build.gradle.kts` file to define the build process, including the application plugin and main class. Added a Gradle wrapper (`gradlew`) for consistent builds. Updated the `README.md` with new build and run instructions. Refactored the `MyVector` class to remove a dependency on a non-standard API.
+ * **Status**: Completed
+---
 **Create AGENTS.MD**
  * **Task**: Create a generic template for the AGENTS.MD file.
  * **Description**: Created the AGENTS.MD file to document AI contributions and provide context for future agents. Populated the file with information about the project's technology stack, architecture, and goals.
@@ -30,7 +35,7 @@ This section contains important information to help future AI agents understand 
 
 ### 1. Technology Stack
  * **Language**: Java
- * **Build Tool**: Manual compilation with `javac`.
+ * **Build Tool**: Gradle
  * **UI Library**: Java Swing
 
 ### 2. Core Architecture

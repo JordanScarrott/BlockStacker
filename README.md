@@ -2,20 +2,24 @@
 
 This is a simple Tetris game implemented in Java using the Swing library.
 
-## How to Run
+## Building and Running
 
-1.  **Compile the code:**
-    Open a terminal or command prompt, navigate to the project's root directory, and run the following command to compile all the Java source files:
-    ```bash
-    javac --source-path . -d out */*.java *.java
-    ```
-    This will compile all `.java` files from the root directory and the `core`, `shape`, and `colorThings` subdirectories, placing the compiled `.class` files into a new `out` directory.
+This project uses Gradle as a build tool. To build and run the project, you can use the included Gradle wrapper (`gradlew`).
 
-2.  **Run the game:**
-    After compilation, run the game with the following command:
-    ```bash
-    java -cp out Main
-    ```
+### Prerequisites
+- Java Development Kit (JDK) 17 or higher.
+
+### Building
+To compile the source code and build the application, run the following command in the project's root directory:
+```bash
+./gradlew build
+```
+
+### Running
+To run the game, use the following command:
+```bash
+./gradlew run
+```
 
 ## Controls
 
@@ -26,7 +30,7 @@ This is a simple Tetris game implemented in Java using the Swing library.
 
 ## Project Structure
 
-The project is organized into several packages and classes:
+The project is organized into several packages and classes under `src/main/java/com/jordan/blockstacker`:
 
 -   `Main.java`: The main entry point of the application. It creates and configures the game window.
 -   `Display.java`: The main `JFrame` for the game. It handles rendering the game state (the grid and the pieces) and listens for keyboard input.
