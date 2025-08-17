@@ -17,6 +17,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+**Create Main Menu**
+ * **Task**: Create a main menu with "Start" and "Exit" options.
+ * **Description**: Created a `MainMenu` class to display the menu. Refactored `Display` from a `JFrame` to a `JPanel` and updated `Main` to use a `CardLayout` to switch between the menu and the game. Affected files: `src/main/java/com/jordan/blockstacker/Main.java`, `src/main/java/com/jordan/blockstacker/Display.java`, `src/main/java/com/jordan/blockstacker/MainMenu.java`.
+ * **Status**: Completed
+---
 
 ---
 **Add Gradle Support**

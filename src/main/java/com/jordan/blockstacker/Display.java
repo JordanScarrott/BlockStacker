@@ -12,9 +12,9 @@ import java.awt.event.KeyListener;
 /**
  * Created by Jordan on 2016-11-20.
  */
-public class Display extends JFrame {
+public class Display extends JPanel {
 
-    private int x, y;
+    private int width, height;
     /**
      * The number of rows and columns in the grid
      * ie: number of blocks per width and height
@@ -24,30 +24,17 @@ public class Display extends JFrame {
 
     private Scene scene;
 
-    public Display(int x, int y) {
-        super("Tetris");
-        this.x = x;
-        this.y = y;
+    public Display(int width, int height) {
+        this.width = width;
+        this.height = height;
 
-        blockWidth = x / blocksPerDim;
-        blockHeight = y / blocksPerDim;
+        blockWidth = width / blocksPerDim;
+        blockHeight = height / blocksPerDim;
 
-        scene = new Scene(x, y, blocksPerDim);
+        scene = new Scene(width, height, blocksPerDim);
 
-        Thread t1 = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(750);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                scene.step();
-                repaint();
-            }
-        });
-        t1.start();
-
-        this.addKeyListener(new KeyListener() {
+        setFocusable(true);
+        addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -75,14 +62,29 @@ public class Display extends JFrame {
 
             }
         });
+    }
 
+    public void startGame() {
+        Thread t1 = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(750);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                scene.step();
+                repaint();
+            }
+        });
+        t1.start();
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         // Draw the Background
         g.setColor(Color.WHITE);
-        g.fillRect(0, 0, x, y);
+        g.fillRect(0, 0, width, height);
 
         for (Shape s : scene.getActiveShapes()) {
             for (Block b : s.getBlocksInThisShape()) {
@@ -113,10 +115,10 @@ public class Display extends JFrame {
         // Draw grid
         g.setColor(Color.gray);
         for (int i = 0; i < blocksPerDim; i++) {
-            g.drawLine(i * blockWidth, 0, i * blockWidth, y);
+            g.drawLine(i * blockWidth, 0, i * blockWidth, height);
         }
         for (int i = 0; i < blocksPerDim; i++) {
-            g.drawLine(0, i * blockHeight, x, i * blockHeight);
+            g.drawLine(0, i * blockHeight, width, i * blockHeight);
         }
     }
 }
