@@ -29,6 +29,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: Created the AGENTS.MD file to document AI contributions and provide context for future agents. Populated the file with information about the project's technology stack, architecture, and goals.
  * **Status**: Completed
 ---
+**Create Test Guide**
+ * **Task**: Create a test guide for the project, including a sample test.
+ * **Description**: Added JUnit 5 dependency to `build.gradle.kts`. Created a `src/test/java` directory and a sample test for the `MyVector` class. Created a `TESTING.md` file to explain how to run the tests.
+ * **Status**: Completed
+---
 
 ## Context for Future Agents
 This section contains important information to help future AI agents understand the project quickly and contribute effectively.
