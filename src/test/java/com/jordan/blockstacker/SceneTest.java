@@ -360,18 +360,19 @@ public class SceneTest {
         }
 
         @Test
-        @DisplayName("should rotate the shape 90 degrees")
-        void testRotateShape() {
-            // The default T-shape starts at (3,0) with blocks at:
-            // (3,0) center, (4,0), (2,0), (3,1)
+        @DisplayName("should rotate the shape 90 degrees when valid")
+        void testRotateShape_Valid() {
+            // Move shape to (3,1) so rotation is not out of bounds
+            activeShape.move(new MyVector(0, 1));
+
+            // The T-shape is now at (3,1) with blocks at:
+            // (3,1) center, (4,1), (2,1), (3,2)
 
             scene.rotateActiveShapes();
 
-            // After a 90-degree rotation (x,y -> -y,x) of relative vectors:
-            // (0,0)->(0,0), (1,0)->(0,1), (-1,0)->(0,-1), (0,1)->(-1,0)
-            // New absolute positions should be:
-            // (3,0), (3,1), (3,-1), (2,0)
-
+            // After a 90-degree rotation, new absolute positions should be:
+            // relative to (3,1): (0,0), (0,1), (0,-1), (-1,0)
+            // absolute: (3,1), (3,2), (3,0), (2,1)
             Block[] blocks = activeShape.getBlocksInThisShape();
             List<MyVector> actualPositions = new ArrayList<>();
             for (Block b : blocks) {
@@ -379,10 +380,10 @@ public class SceneTest {
             }
 
             List<MyVector> expectedPositions = Arrays.asList(
-                new MyVector(3, 0),
-                new MyVector(3, 1),
-                new MyVector(3, -1),
-                new MyVector(2, 0)
+                    new MyVector(3, 1),
+                    new MyVector(3, 2),
+                    new MyVector(3, 0),
+                    new MyVector(2, 1)
             );
 
             assertEquals(expectedPositions.size(), actualPositions.size(), "Should have the same number of blocks after rotation.");
@@ -390,6 +391,30 @@ public class SceneTest {
             for (MyVector expectedPos : expectedPositions) {
                 boolean found = actualPositions.stream().anyMatch(p -> p.x == expectedPos.x && p.y == expectedPos.y);
                 assertTrue(found, "Expected position " + expectedPos + " was not found after rotation.");
+            }
+        }
+        @Test
+        @DisplayName("should not rotate shape if it results in going out of bounds")
+        void testShouldNotRotateWhenOutOfBounds() {
+            // Move the T-shape to a position where rotation would place a block out of bounds
+            Shape activeShape = scene.getActiveShapes().get(0);
+            activeShape.move(new MyVector(-2, 0)); // Shape at (1,0), leftmost block at x=0
+
+            // Capture the original positions of the blocks
+            Block[] originalBlocks = activeShape.getBlocksInThisShape();
+            MyVector[] originalPositions = new MyVector[originalBlocks.length];
+            for (int i = 0; i < originalBlocks.length; i++) {
+                originalPositions[i] = originalBlocks[i].location.copy();
+            }
+
+            // Attempt to rotate the shape. This should be prevented.
+            scene.rotateActiveShapes();
+
+            // Verify that the block positions have not changed
+            Block[] rotatedBlocks = activeShape.getBlocksInThisShape();
+            for (int i = 0; i < rotatedBlocks.length; i++) {
+                assertEquals(originalPositions[i].x, rotatedBlocks[i].location.x, "Block x position should not change");
+                assertEquals(originalPositions[i].y, rotatedBlocks[i].location.y, "Block y position should not change");
             }
         }
     }
