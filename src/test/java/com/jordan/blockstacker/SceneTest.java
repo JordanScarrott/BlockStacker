@@ -392,6 +392,25 @@ public class SceneTest {
                 assertTrue(found, "Expected position " + expectedPos + " was not found after rotation.");
             }
         }
+
+        @Test
+        @DisplayName("should crash when locking a shape that was rotated out of bounds")
+        void testRotationOutOfBoundsCausesCrashOnLock() {
+            // Rotate the initial T-shape immediately.
+            // After rotation, one of its blocks will be at y=-1, which is out of bounds.
+            scene.rotateActiveShapes();
+
+            // Place a block on the grid to prevent the shape from moving down.
+            // This will force the 'lock' mechanism to trigger on the next step.
+            // The rotated shape has a block at (2,0). Let's block the cell below it, at (2,1).
+            scene.getAllBlocks()[2][1] = new Block(2, 1);
+
+            // The next step will fail shapeCanMove() because of the obstacle at (2,1).
+            // It will then try to lock the shape in its current out-of-bounds position.
+            assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+                scene.step();
+            }, "The game should crash when trying to lock a shape with a part out of bounds.");
+        }
     }
 
     @Nested
