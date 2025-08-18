@@ -208,6 +208,27 @@ public class SceneTest {
             // Assert that a block far from the locked piece is still there.
             assertNotNull(grid[0][rowToTest], "Block at (0, " + rowToTest + ") should not have been cleared.");
         }
+
+        @Test
+        @DisplayName("should create particle effects when a line is cleared")
+        void testParticleEffectsAreCreatedOnLineClear() {
+            Block[][] grid = scene.getAllBlocks();
+            int rowToClear = GRID_SIZE - 1;
+
+            // Fill the row
+            for (int i = 0; i < GRID_SIZE; i++) {
+                grid[i][rowToClear] = new Block(i, rowToClear);
+            }
+
+            // Drop the default T-piece to the bottom.
+            for (int i = 0; i < 8; i++) {
+                scene.step();
+            }
+            scene.step(); // This step locks the piece and clears the line.
+
+            assertEquals(10, scene.getScore(), "Score should be 10 after clearing one line.");
+            assertEquals(GRID_SIZE, scene.getParticleEffects().size(), "Should create a particle effect for each block in the cleared row.");
+        }
     }
 
     @Nested

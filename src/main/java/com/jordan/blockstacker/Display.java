@@ -1,6 +1,8 @@
 package com.jordan.blockstacker;
 
 import com.jordan.blockstacker.core.MyVector;
+import com.jordan.blockstacker.effects.Particle;
+import com.jordan.blockstacker.effects.ParticleEffect;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 
@@ -108,6 +110,14 @@ public class Display extends JPanel {
 //                    g.setColor(Color.BLACK);
 //                    g.drawRect(x1 * blockWidth, y1 * blockHeight, blockWidth, blockHeight);
                 }
+            }
+        }
+
+        // Draw particles
+        for (ParticleEffect effect : scene.getParticleEffects()) {
+            for (Particle p : effect.getParticles()) {
+                g.setColor(p.getColor());
+                g.fillRect((int)(p.getPosition().x * blockWidth), (int)(p.getPosition().y * blockHeight), 3, 3); // Draw a small 3x3 pixel rectangle for each particle
             }
         }
 

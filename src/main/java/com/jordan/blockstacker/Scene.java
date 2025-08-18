@@ -1,10 +1,12 @@
 package com.jordan.blockstacker;
 
 import com.jordan.blockstacker.core.MyVector;
+import com.jordan.blockstacker.effects.ParticleEffect;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -19,6 +21,7 @@ public class Scene {
     private int score = 0;
 
     private ArrayList<Shape> activeShapes;
+    private List<ParticleEffect> particleEffects;
 
     private Random rand = new Random();
 
@@ -30,6 +33,7 @@ public class Scene {
         allBlocks = new Block[blocksPerDim][blocksPerDim];
 
         activeShapes = new ArrayList<>();
+        particleEffects = new ArrayList<>();
 
         Shape aShape = new Shape(new MyVector(3, 0), Shape.T_BLOCK);
         activeShapes.add(aShape);
@@ -43,6 +47,11 @@ public class Scene {
     }
 
     public void step(MyVector movement) {
+        // Update particle effects
+        particleEffects.removeIf(ParticleEffect::isFinished);
+        for (ParticleEffect effect : particleEffects) {
+            effect.update();
+        }
         // Check if block can move in direction it wants to
         // If it can then move it
         // Else set as static
@@ -65,6 +74,9 @@ public class Scene {
                 for(int j = 0 ; j < blocksPerDim; j++) {
                     if (rowFilled(j)) {
                         for(int k = 0; k < blocksPerDim; k++) {
+                            if (allBlocks[k][j] != null) {
+                                particleEffects.add(new ParticleEffect(allBlocks[k][j].getLocation(), allBlocks[k][j].getBlockColor()));
+                            }
                             allBlocks[k][j] = null;
                         }
                         score += 10;
@@ -148,6 +160,10 @@ public class Scene {
 
     public Block[][] getAllBlocks() {
         return allBlocks;
+    }
+
+    public List<ParticleEffect> getParticleEffects() {
+        return particleEffects;
     }
 
     public int getScore() {
