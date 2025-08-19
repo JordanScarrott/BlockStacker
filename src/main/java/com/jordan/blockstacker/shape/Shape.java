@@ -6,68 +6,44 @@ import com.jordan.blockstacker.core.MyVector;
 import java.awt.*;
 import java.util.Random;
 
-/**
- * Created by Jordan on 2016-11-29.
- */
 public class Shape {
 
-    public static int[] L_BLOCK = new int[]{0, 1, 0, -1, 1, -1};
-    public static int[] J_BLOCK = new int[]{0, 1, 0, -1, -1, -1};
-    public static int[] I_BLOCK = new int[]{0, 1, 0, -1, 0, 2};
-    public static int[] O_BLOCK = new int[]{0, 1, 1, 1, 1, 0};
-    public static int[] T_BLOCK = new int[]{1, 0, -1, 0, 0, 1};
+    public static final int[] L_BLOCK = new int[]{0, 1, 0, -1, 1, -1};
+    public static final int[] J_BLOCK = new int[]{0, 1, 0, -1, -1, -1};
+    public static final int[] I_BLOCK = new int[]{0, 1, 0, -1, 0, 2};
+    public static final int[] O_BLOCK = new int[]{0, 1, 1, 1, 1, 0};
+    public static final int[] T_BLOCK = new int[]{1, 0, -1, 0, 0, 1};
 
     public MyVector location;
     public Color colour;
     private Block[] blocksInThisShape;
     private boolean isStatic;
+    private final int[] shapeType; // Added to remember the shape's structure
 
-    // Constructor
     public Shape(MyVector location, int[] shapeType) {
         this.location = location;
+        this.shapeType = shapeType; // Store the shape type
         this.addBlockCoordinates(shapeType);
         this.isStatic = false;
         this.colour = ColourUtils.randomColour();
 
-        // Set the colour of each block in this shape
         for (Block b : blocksInThisShape) {
             b.setBlockColor(this.colour);
         }
     }
 
-
-    /**
-     * @return a random ShapeType
-     * */
     public static int[] randomShapeType() {
-        int[] shapeType = null;
         Random rand = new Random();
-
         switch (rand.nextInt(5)) {
-            case 0:
-                shapeType = L_BLOCK;
-                break;
-            case 1:
-                shapeType =  J_BLOCK;
-                break;
-            case 2:
-                shapeType = I_BLOCK;
-                break;
-            case 3:
-                shapeType = O_BLOCK;
-                break;
-            case 4:
-                shapeType = T_BLOCK;
-                break;
-            default:
+            case 0: return L_BLOCK;
+            case 1: return J_BLOCK;
+            case 2: return I_BLOCK;
+            case 3: return O_BLOCK;
+            case 4: return T_BLOCK;
+            default: return T_BLOCK; // Default case
         }
-
-        return shapeType;
     }
 
-    /**
-     *
-     * */
     public boolean addBlockCoordinates(int... a) {
         if (a.length % 2 != 0) return false;
 
@@ -83,11 +59,19 @@ public class Shape {
         return true;
     }
 
-    /**
-     *
-     * */
-    public void move(int x, int y) {
-        move(new MyVector(x, y));
+    public void rotateShapeOnly() {
+        for (Block b : blocksInThisShape) {
+            // Translate to origin
+            b.location.sub(this.location);
+            // Rotate
+            b.location.rotate90();
+            // Translate back
+            b.location.add(this.location);
+
+            // Round the location to snap to grid
+            b.location.x = Math.round(b.location.x);
+            b.location.y = Math.round(b.location.y);
+        }
     }
 
     public void move(MyVector myVector) {
@@ -102,6 +86,17 @@ public class Shape {
         return blocksInThisShape;
     }
 
+    public void setBlocksInThisShape(Block[] blocks) {
+        this.blocksInThisShape = new Block[blocks.length];
+        for (int i = 0; i < blocks.length; i++) {
+            this.blocksInThisShape[i] = new Block((int)blocks[i].location.x, (int)blocks[i].location.y);
+        }
+    }
+
+    public int[] getShapeType() {
+        return shapeType;
+    }
+
     public boolean isStatic() {
         return isStatic;
     }
@@ -109,5 +104,4 @@ public class Shape {
     public void setStatic(boolean isStatic) {
         this.isStatic = isStatic;
     }
-
 }

@@ -1,127 +1,93 @@
 package com.jordan.blockstacker;
 
-import com.jordan.blockstacker.core.MyVector;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-/**
- * Created by Jordan on 2016-11-20.
- */
 public class Display extends JPanel {
 
-    private int width, height;
-    /**
-     * The number of rows and columns in the grid
-     * ie: number of blocks per width and height
-     */
-    private int blocksPerDim = 15;
-    private int blockWidth, blockHeight;
+    private final Scene scene;
+    private int blockWidth;
+    private int blockHeight;
 
-    private Scene scene;
-
-    public Display(int width, int height) {
-        this.width = width;
-        this.height = height;
-
-        blockWidth = width / blocksPerDim;
-        blockHeight = height / blocksPerDim;
-
-        scene = new Scene(width, height, blocksPerDim);
-
+    public Display(Scene scene) {
+        this.scene = scene;
         setFocusable(true);
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyChar() == 'a') {
-                    scene.moveActiveShapes(new MyVector(-1, 0));
-                } else if (e.getKeyChar() == 'd') {
-                    scene.moveActiveShapes(new MyVector(1, 0));
-                } else if (e.getKeyChar() == 's') {
-                    scene.step(new MyVector(0, 1));
-                } else if (e.getKeyChar() == 'q') {
-                    scene.rotateActiveShapes();
-                }
-                //
-                if (e.getKeyChar() == 'a' || e.getKeyChar() == 'd' || e.getKeyChar() == 's' || e.getKeyChar() == 'q') {
-                    repaint();
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
-    }
-
-    public void startGame() {
-        Thread t1 = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(750);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                scene.step();
-                repaint();
-            }
-        });
-        t1.start();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Draw the Background
+
+        // It's better to calculate this here in case the panel is resized.
+        blockWidth = getWidth() / GameConstants.GRID_DIMENSION;
+        blockHeight = getHeight() / GameConstants.GRID_DIMENSION;
+
+        drawBackground(g);
+        drawAllBlocks(g);
+        drawActiveShape(g);
+        drawGrid(g);
+        drawScore(g);
+    }
+
+    private void drawBackground(Graphics g) {
         g.setColor(Color.WHITE);
-        g.fillRect(0, 0, width, height);
+        g.fillRect(0, 0, getWidth(), getHeight());
+    }
 
-        for (Shape s : scene.getActiveShapes()) {
-            for (Block b : s.getBlocksInThisShape()) {
-                g.setColor(b.getBlockColor());
-
-                int x1 = (int) b.location.x;
-                int y1 = (int) b.location.y;
-                g.fillRect(x1 * blockWidth, y1 * blockHeight, blockWidth, blockHeight);
-                g.setColor(Color.BLACK);
-                g.drawRect(x1 * blockWidth, y1 * blockHeight, blockWidth, blockHeight);
-            }
-        }
-        for (int i = 0; i < blocksPerDim; i++) {
-            for (int j = 0; j < blocksPerDim; j++) {
-                Block b = scene.getAllBlocks()[i][j];
-                if (scene.getAllBlocks()[i][j] != null) {
-                    g.setColor(b.getBlockColor());
-                    int x1 = (int) b.location.x;
-                    int y1 = (int) b.location.y;
-                    g.fillRect(x1 * blockWidth, y1 * blockHeight, blockWidth, blockHeight);
-//                    g.setColor(Color.BLACK);
-//                    g.drawRect(x1 * blockWidth, y1 * blockHeight, blockWidth, blockHeight);
+    private void drawAllBlocks(Graphics g) {
+        Block[][] grid = scene.getGrid();
+        for (int i = 0; i < GameConstants.GRID_DIMENSION; i++) {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION; j++) {
+                if (grid[i][j] != null) {
+                    drawBlock(g, grid[i][j]);
                 }
             }
         }
+    }
 
-
-        // Draw grid
-        g.setColor(Color.gray);
-        for (int i = 0; i < blocksPerDim; i++) {
-            g.drawLine(i * blockWidth, 0, i * blockWidth, height);
+    private void drawActiveShape(Graphics g) {
+        Shape activeShape = scene.getActiveShape();
+        if (activeShape != null) {
+            for (Block b : activeShape.getBlocksInThisShape()) {
+                // Draw a border for active blocks to distinguish them
+                drawBlock(g, b, true);
+            }
         }
-        for (int i = 0; i < blocksPerDim; i++) {
-            g.drawLine(0, i * blockHeight, width, i * blockHeight);
-        }
+    }
 
+    private void drawGrid(Graphics g) {
+        g.setColor(Color.GRAY);
+        for (int i = 0; i < GameConstants.GRID_DIMENSION; i++) {
+            g.drawLine(i * blockWidth, 0, i * blockWidth, getHeight());
+            g.drawLine(0, i * blockHeight, getWidth(), i * blockHeight);
+        }
+    }
+
+    private void drawScore(Graphics g) {
         g.setColor(Color.BLACK);
-        g.drawString("Score: " + scene.getScore(), 10, 20);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Score: " + scene.getScore(), 10, 25);
+    }
+
+    private void drawBlock(Graphics g, Block b) {
+        drawBlock(g, b, false);
+    }
+
+    private void drawBlock(Graphics g, Block b, boolean withBorder) {
+        if (b == null) return;
+
+        int x = (int) b.location.x * blockWidth;
+        int y = (int) b.location.y * blockHeight;
+
+        g.setColor(b.getBlockColor());
+        g.fillRect(x, y, blockWidth, blockHeight);
+
+        if (withBorder) {
+            g.setColor(Color.BLACK);
+            g.drawRect(x, y, blockWidth - 1, blockHeight - 1);
+        }
     }
 }
