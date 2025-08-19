@@ -4,195 +4,169 @@ import com.jordan.blockstacker.core.MyVector;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Created by Jordan on 2016-11-29.
- */
 public class Scene {
 
-    private int x, y, blocksPerDim;
-    private Block[][] allBlocks;
-//    private ArrayList<Block>
-
+    private final Block[][] grid;
     private int score = 0;
+    private Shape activeShape;
+    private final Random rand = new Random();
 
-    private ArrayList<Shape> activeShapes;
-
-    private Random rand = new Random();
-
-    public Scene(int x, int y, int blocksPerDim) {
-        this.x = x;
-        this.y = y;
-        this.blocksPerDim = blocksPerDim;
-
-        allBlocks = new Block[blocksPerDim][blocksPerDim];
-
-        activeShapes = new ArrayList<>();
-
-        Shape aShape = new Shape(new MyVector(3, 0), Shape.T_BLOCK);
-        activeShapes.add(aShape);
+    public Scene() {
+        this.grid = new Block[GameConstants.GRID_DIMENSION][GameConstants.GRID_DIMENSION];
+        spawnNewShape();
     }
 
-    /**
-     * Step the game forward by one thing
-     */
     public void step() {
         step(new MyVector(0, 1));
     }
 
     public void step(MyVector movement) {
-        // Check if block can move in direction it wants to
-        // If it can then move it
-        // Else set as static
-        for (int i = 0; i < activeShapes.size(); i++) {
-            Shape shape = activeShapes.get(i);
-            if (shapeCanMove(shape, movement)) {
-                shape.move(movement);
-            } else {
-                shape.setStatic(true);
-                // Copy every Block object into the allBlocks array
-                for (Block b : shape.getBlocksInThisShape()) {
-                    allBlocks[(int)b.location.x][(int)b.location.y] = new Block((int)b.location.x, (int)b.location.y);
-                    allBlocks[(int)b.location.x][(int)b.location.y].setBlockColor(b.getBlockColor());
-                }
-                activeShapes.remove(shape);
+        if (activeShape == null) {
+            spawnNewShape();
+            return;
+        }
 
-                activeShapes.add(new Shape(new MyVector(rand.nextInt(blocksPerDim - 3) + 2, 0), Shape.randomShapeType()));
+        if (shapeCanMove(activeShape, movement)) {
+            activeShape.move(movement);
+        } else {
+            solidifyActiveShape();
+            int clearedRows = clearCompletedRows();
+            score += clearedRows * GameConstants.SCORE_PER_ROW;
+            spawnNewShape();
+        }
+    }
 
-                // Row Clearing
-                for(int j = 0 ; j < blocksPerDim; j++) {
-                    if (rowFilled(j)) {
-                        for(int k = 0; k < blocksPerDim; k++) {
-                            allBlocks[k][j] = null;
-                        }
-                        score += 10;
-                        System.out.println("Row " + j + " cleared!");
-                        // Move Blocks down
-                        moveBlocksDown(j);
-                        // Check if moving Blocks down causes another row Clear
-                        j--;
-                    }
-                }
+    private void solidifyActiveShape() {
+        for (Block b : activeShape.getBlocksInThisShape()) {
+            int x = (int) b.location.x;
+            int y = (int) b.location.y;
+            if (isWithinBounds(x, y)) {
+                grid[x][y] = new Block(x, y);
+                grid[x][y].setBlockColor(b.getBlockColor());
             }
         }
     }
 
-    public void moveActiveShapes(MyVector movement) {
-        for (int i = 0; i < activeShapes.size(); i++) {
-            Shape shape = activeShapes.get(i);
-            if (shapeCanMove(shape, movement)) {
-                shape.move(movement);
+    // package-private for testing
+    int clearCompletedRows() {
+        int rowsCleared = 0;
+        for (int j = GameConstants.GRID_DIMENSION - 1; j >= 0; j--) {
+            if (isRowFilled(j)) {
+                clearRow(j);
+                moveBlocksDown(j);
+                rowsCleared++;
+                // Since rows have shifted down, we need to check the same row index again.
+                j++;
             }
+        }
+        return rowsCleared;
+    }
+
+    private void spawnNewShape() {
+        int[] shapeType = Shape.randomShapeType();
+        MyVector startPos = new MyVector(GameConstants.INITIAL_SHAPE_X, GameConstants.INITIAL_SHAPE_Y);
+        this.activeShape = new Shape(startPos, shapeType);
+    }
+
+    public void moveActiveShape(MyVector movement) {
+        if (activeShape != null && shapeCanMove(activeShape, movement)) {
+            activeShape.move(movement);
         }
     }
 
-    /**
-     * Rotates all the active shapes.
-     * */
-    public void rotateActiveShapes() {
-        for (Shape s : activeShapes) {
-            rotateShape(s);
+    public void rotateActiveShape() {
+        if (activeShape == null) return;
+
+        // Create a temporary rotated shape to check for validity
+        Shape testShape = new Shape(activeShape.location.copy(), activeShape.getShapeType());
+        testShape.setBlocksInThisShape(activeShape.getBlocksInThisShape());
+
+        // Perform a test rotation
+        testShape.rotateShapeOnly();
+
+        if (isRotationValid(testShape)) {
+            activeShape.rotateShapeOnly();
         }
     }
 
-    /**
-     * Rotates a shape, but only if the rotation is valid (within bounds and no collisions).
-     * @param shape The shape to rotate.
-     */
-    private void rotateShape(Shape shape) {
-        // Get the locations of the blocks as if they were rotated
-        Block[] blocks = shape.getBlocksInThisShape();
-        MyVector[] futureLocations = new MyVector[blocks.length];
-        for (int i = 0; i < blocks.length; i++) {
-            MyVector futureLocation = blocks[i].location.copy();
-            futureLocation.sub(shape.location);
-            futureLocation.rotate90();
-            futureLocation.add(shape.location);
-            futureLocations[i] = futureLocation;
-        }
-
-        // Check if the future locations are valid
-        for (MyVector potentialLocation : futureLocations) {
-            MyVector roundedLocation = new MyVector(Math.round(potentialLocation.x), Math.round(potentialLocation.y));
-            if (roundedLocation.x >= blocksPerDim || roundedLocation.y >= blocksPerDim ||
-                roundedLocation.x < 0 || roundedLocation.y < 0) {
-                return; // Invalid rotation, so do nothing
-            }
-            if (allBlocks[(int) roundedLocation.x][(int) roundedLocation.y] != null) {
-                return; // Collision with existing block, so do nothing
-            }
-        }
-
-        // If we get here, the rotation is valid. Apply it.
-        for (int i = 0; i < blocks.length; i++) {
-            MyVector potentialLocation = futureLocations[i];
-            MyVector roundedLocation = new MyVector(Math.round(potentialLocation.x), Math.round(potentialLocation.y));
-            blocks[i].location.set(roundedLocation);
-        }
-    }
-
-    /**
-     *
-     * */
-    public void moveBlocksDown(int startRow) {
-        for (int i = startRow; i > 0; i--) {
-            for(int j = 0; j < blocksPerDim; j++) {
-                allBlocks[j][i] = allBlocks[j][i-1];
-                if (allBlocks[j][i] != null) {
-                    allBlocks[j][i].location.add(0, 1);
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks to see if a row should be cleared
-     * */
-    public boolean rowFilled(int row) {
-        for(int i = 0; i < blocksPerDim; i++) {
-            if (allBlocks[i][row] == null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @returns true if location of each Block in a Shape + movement is not occupied
-     * by another Block on the grid
-     */
-    public boolean shapeCanMove(Shape shape, MyVector movement) {
-        MyVector potentialMove = new MyVector();
+    private boolean isRotationValid(Shape shape) {
         for (Block b : shape.getBlocksInThisShape()) {
-            potentialMove = MyVector.add(b.location, movement);
+            int x = (int) Math.round(b.location.x);
+            int y = (int) Math.round(b.location.y);
 
-            // Array Bounds Protection
-            if (potentialMove.x >= blocksPerDim
-                    || potentialMove.y >= blocksPerDim
-                    || potentialMove.x < 0
-                    || potentialMove.y < 0) {
-                return false;
+            if (!isWithinBounds(x, y)) {
+                return false; // Out of bounds
             }
-
-            // Check if any Block in this shape will hit another active block
-            if (allBlocks[(int) potentialMove.x][(int) potentialMove.y] != null) {
-                return false;
+            if (grid[x][y] != null) {
+                return false; // Collision with existing block
             }
         }
         return true;
     }
 
 
-    // Constructor
-    public ArrayList<Shape> getActiveShapes() {
-        return activeShapes;
+    private void moveBlocksDown(int clearedRow) {
+        for (int i = clearedRow; i > 0; i--) {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION; j++) {
+                grid[j][i] = grid[j][i - 1];
+                if (grid[j][i] != null) {
+                    grid[j][i].location.add(0, 1);
+                }
+            }
+        }
     }
 
-    public Block[][] getAllBlocks() {
-        return allBlocks;
+    private void clearRow(int row) {
+        for (int i = 0; i < GameConstants.GRID_DIMENSION; i++) {
+            grid[i][row] = null;
+        }
+        System.out.println("Row " + row + " cleared!");
+    }
+
+
+    private boolean isRowFilled(int row) {
+        for (int i = 0; i < GameConstants.GRID_DIMENSION; i++) {
+            if (grid[i][row] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean shapeCanMove(Shape shape, MyVector movement) {
+        for (Block b : shape.getBlocksInThisShape()) {
+            MyVector nextPos = MyVector.add(b.location, movement);
+            int x = (int) nextPos.x;
+            int y = (int) nextPos.y;
+
+            if (!isWithinBounds(x,y)) {
+                return false;
+            }
+            if (grid[x][y] != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isWithinBounds(int x, int y) {
+        return x >= 0 && x < GameConstants.GRID_DIMENSION && y >= 0 && y < GameConstants.GRID_DIMENSION;
+    }
+
+    // Getters for the Display class
+    public Shape getActiveShape() {
+        return activeShape;
+    }
+
+    // Setter for testing
+    public void setActiveShape(Shape shape) {
+        this.activeShape = shape;
+    }
+
+    public Block[][] getGrid() {
+        return grid;
     }
 
     public int getScore() {

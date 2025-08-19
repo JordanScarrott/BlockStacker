@@ -8,3 +8,6 @@ build
 
 # Logs
 *.log
+
+# Heap dump files
+*.hprof
