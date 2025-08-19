@@ -43,9 +43,9 @@ public class Display extends JPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == 'a') {
-                    scene.step(new MyVector(-1, 0));
+                    scene.moveActiveShapes(new MyVector(-1, 0));
                 } else if (e.getKeyChar() == 'd') {
-                    scene.step(new MyVector(1, 0));
+                    scene.moveActiveShapes(new MyVector(1, 0));
                 } else if (e.getKeyChar() == 's') {
                     scene.step(new MyVector(0, 1));
                 } else if (e.getKeyChar() == 'q') {

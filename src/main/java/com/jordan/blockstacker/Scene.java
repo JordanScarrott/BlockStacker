@@ -79,6 +79,15 @@ public class Scene {
         }
     }
 
+    public void moveActiveShapes(MyVector movement) {
+        for (int i = 0; i < activeShapes.size(); i++) {
+            Shape shape = activeShapes.get(i);
+            if (shapeCanMove(shape, movement)) {
+                shape.move(movement);
+            }
+        }
+    }
+
     /**
      * Rotates all the active shapes.
      * */
@@ -106,18 +115,21 @@ public class Scene {
 
         // Check if the future locations are valid
         for (MyVector potentialLocation : futureLocations) {
-            if (potentialLocation.x >= blocksPerDim || potentialLocation.y >= blocksPerDim ||
-                potentialLocation.x < 0 || potentialLocation.y < 0) {
+            MyVector roundedLocation = new MyVector(Math.round(potentialLocation.x), Math.round(potentialLocation.y));
+            if (roundedLocation.x >= blocksPerDim || roundedLocation.y >= blocksPerDim ||
+                roundedLocation.x < 0 || roundedLocation.y < 0) {
                 return; // Invalid rotation, so do nothing
             }
-            if (allBlocks[(int) potentialLocation.x][(int) potentialLocation.y] != null) {
+            if (allBlocks[(int) roundedLocation.x][(int) roundedLocation.y] != null) {
                 return; // Collision with existing block, so do nothing
             }
         }
 
         // If we get here, the rotation is valid. Apply it.
         for (int i = 0; i < blocks.length; i++) {
-            blocks[i].location.set(futureLocations[i]);
+            MyVector potentialLocation = futureLocations[i];
+            MyVector roundedLocation = new MyVector(Math.round(potentialLocation.x), Math.round(potentialLocation.y));
+            blocks[i].location.set(roundedLocation);
         }
     }
 
