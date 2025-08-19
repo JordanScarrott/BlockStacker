@@ -17,6 +17,17 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+---
+**Refactor Game Loop for Smooth Animations**
+ * **Task**: Decouple rendering and animation updates from the core game logic tick to allow for smooth animations.
+ * **Description**: Refactored the main game loop in `Display.java` to use a variable timestep approach with an accumulator. This allows the particle effects and rendering to update at a high frequency (~60fps) while the core game logic continues to run at its original 750ms interval. Moved the particle update logic from `Scene.java`'s `step()` method to a new `updateParticles()` method to facilitate this change.
+ * **Status**: Completed
+---
+**Add Particle Effect for Cleared Rows**
+ * **Task**: Create a particle effect that triggers when a row of blocks is cleared.
+ * **Description**: Implemented a particle system with `Particle` and `ParticleEffect` classes in a new `effects` package. Integrated this system into `Scene.java` to generate effects when a line is cleared. Updated `Display.java` to render the particles. Added comprehensive unit tests for the new classes and the integration.
+ * **Status**: Completed
+---
 **Add Score Counter**
  * **Task**: Add an in-game score counter.
  * **Description**: Added a score counter to the game. The score increases by 10 points for each cleared line. The score is displayed in the top-left corner of the screen. Affected files: `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Display.java`.

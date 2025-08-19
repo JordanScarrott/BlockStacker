@@ -47,11 +47,6 @@ public class Scene {
     }
 
     public void step(MyVector movement) {
-        // Update particle effects
-        particleEffects.removeIf(ParticleEffect::isFinished);
-        for (ParticleEffect effect : particleEffects) {
-            effect.update();
-        }
         // Check if block can move in direction it wants to
         // If it can then move it
         // Else set as static
@@ -88,6 +83,13 @@ public class Scene {
                     }
                 }
             }
+        }
+    }
+
+    public void updateParticles() {
+        particleEffects.removeIf(ParticleEffect::isFinished);
+        for (ParticleEffect effect : particleEffects) {
+            effect.update();
         }
     }
 

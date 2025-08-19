@@ -68,14 +68,31 @@ public class Display extends JPanel {
 
     public void startGame() {
         Thread t1 = new Thread(() -> {
+            long lastTime = System.nanoTime();
+            double gameLogicTimeAccumulator = 0;
+            final double gameLogicTick = 0.750; // 750ms
+
             while (true) {
+                long currentTime = System.nanoTime();
+                double deltaTime = (currentTime - lastTime) / 1_000_000_000.0;
+                lastTime = currentTime;
+
+                gameLogicTimeAccumulator += deltaTime;
+
+                if (gameLogicTimeAccumulator >= gameLogicTick) {
+                    scene.step();
+                    gameLogicTimeAccumulator -= gameLogicTick;
+                }
+
+                scene.updateParticles();
+                repaint();
+
                 try {
-                    Thread.sleep(750);
+                    // Sleep for a short time to avoid burning CPU
+                    Thread.sleep(16);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                scene.step();
-                repaint();
             }
         });
         t1.start();
