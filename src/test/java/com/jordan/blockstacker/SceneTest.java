@@ -274,6 +274,26 @@ public class SceneTest {
             // The T-shape has a block at (3,1). A downward move (0,1) would cause a collision at (3,2).
             assertFalse(scene.shapeCanMove(activeShape, new MyVector(0, 1)), "Shape should not be able to move into an occupied cell.");
         }
+
+        @Test
+        @DisplayName("should not lock the piece when a horizontal move is invalid")
+        void testInvalidHorizontalMoveDoesNotLockPiece() {
+            // A T-Block at (3,0) has its rightmost block at x=4.
+            // Move it 5 times to the right, so its rightmost block is at x=9.
+            activeShape.move(5, 0); // location is now (8,0)
+            assertEquals(8, activeShape.location.x);
+
+            // The next horizontal move is invalid.
+            assertFalse(scene.shapeCanMove(activeShape, new MyVector(1, 0)));
+
+            // Call the horizontal move method
+            scene.moveActiveShapes(new MyVector(1, 0));
+
+            // Assert that the shape is still the same, not static, and at the same location.
+            assertEquals(1, scene.getActiveShapes().size(), "Should still only be one active shape.");
+            assertFalse(scene.getActiveShapes().get(0).isStatic(), "Shape should not be static.");
+            assertEquals(8, scene.getActiveShapes().get(0).location.x, "Shape should not have moved.");
+        }
     }
 
     @Nested
@@ -416,6 +436,21 @@ public class SceneTest {
                 assertEquals(originalPositions[i].x, rotatedBlocks[i].location.x, "Block x position should not change");
                 assertEquals(originalPositions[i].y, rotatedBlocks[i].location.y, "Block y position should not change");
             }
+        }
+
+        @Test
+        @DisplayName("should not crash when rotating at the edge due to float precision")
+        void testRotationAtEdgeDoesNotCrash() {
+            // Place a shape at the far right edge. A T-block at (8,1) has its rightmost part at x=9.
+            // We need to re-initialize the scene and shape to ensure a clean state for this test.
+            scene = new Scene(500, 500, GRID_SIZE);
+            activeShape = scene.getActiveShapes().get(0);
+            activeShape.move(new MyVector(5, 1)); // T-shape starts at (3,0), move to (8,1).
+
+            // With the rounding fix, this should not throw an exception.
+            assertDoesNotThrow(() -> {
+                scene.rotateActiveShapes();
+            }, "Rotation at the edge should not throw an exception.");
         }
     }
 
