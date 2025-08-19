@@ -35,17 +35,6 @@ public class Shape {
         }
     }
 
-    /**
-     * Rotates all the blocks in this shape 90deg about this
-     * Shapes location Vector
-     * */
-    public void rotateShape90() {
-        for (Block b : blocksInThisShape) {
-            b.location.sub(this.location);
-            b.location.rotate90();
-            b.location.add(this.location);
-        }
-    }
 
     /**
      * @return a random ShapeType

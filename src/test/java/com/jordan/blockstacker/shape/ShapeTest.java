@@ -47,34 +47,6 @@ public class ShapeTest {
         }
     }
 
-    @Test
-    public void testRotateShape90() {
-        MyVector initialLocation = new MyVector(5, 5);
-        Shape shape = new Shape(initialLocation, Shape.L_BLOCK);
-
-        // Rotate the shape
-        shape.rotateShape90();
-
-        Block[] blocks = shape.getBlocksInThisShape();
-        // Original relative vectors: (0, 1), (0, -1), (1, -1), (0, 0)
-        // Rotated relative vectors: (-1, 0), (1, 0), (1, 1), (0, 0)
-
-        // Block 0: 5-1, 5+0 -> (4, 5)
-        assertEquals(4, blocks[0].location.x, DELTA);
-        assertEquals(5, blocks[0].location.y, DELTA);
-
-        // Block 1: 5+1, 5+0 -> (6, 5)
-        assertEquals(6, blocks[1].location.x, DELTA);
-        assertEquals(5, blocks[1].location.y, DELTA);
-
-        // Block 2: 5+1, 5+1 -> (6, 6)
-        assertEquals(6, blocks[2].location.x, DELTA);
-        assertEquals(6, blocks[2].location.y, DELTA);
-
-        // Block 3: 5+0, 5+0 -> (5, 5) - center block doesn't change relative to shape loc
-        assertEquals(5, blocks[3].location.x, DELTA);
-        assertEquals(5, blocks[3].location.y, DELTA);
-    }
 
     @Test
     public void testRandomShapeType() {

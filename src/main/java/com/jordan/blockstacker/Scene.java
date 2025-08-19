@@ -80,11 +80,44 @@ public class Scene {
     }
 
     /**
-     * Rotates all the active shapes
+     * Rotates all the active shapes.
      * */
     public void rotateActiveShapes() {
         for (Shape s : activeShapes) {
-            s.rotateShape90();
+            rotateShape(s);
+        }
+    }
+
+    /**
+     * Rotates a shape, but only if the rotation is valid (within bounds and no collisions).
+     * @param shape The shape to rotate.
+     */
+    private void rotateShape(Shape shape) {
+        // Get the locations of the blocks as if they were rotated
+        Block[] blocks = shape.getBlocksInThisShape();
+        MyVector[] futureLocations = new MyVector[blocks.length];
+        for (int i = 0; i < blocks.length; i++) {
+            MyVector futureLocation = blocks[i].location.copy();
+            futureLocation.sub(shape.location);
+            futureLocation.rotate90();
+            futureLocation.add(shape.location);
+            futureLocations[i] = futureLocation;
+        }
+
+        // Check if the future locations are valid
+        for (MyVector potentialLocation : futureLocations) {
+            if (potentialLocation.x >= blocksPerDim || potentialLocation.y >= blocksPerDim ||
+                potentialLocation.x < 0 || potentialLocation.y < 0) {
+                return; // Invalid rotation, so do nothing
+            }
+            if (allBlocks[(int) potentialLocation.x][(int) potentialLocation.y] != null) {
+                return; // Collision with existing block, so do nothing
+            }
+        }
+
+        // If we get here, the rotation is valid. Apply it.
+        for (int i = 0; i < blocks.length; i++) {
+            blocks[i].location.set(futureLocations[i]);
         }
     }
 

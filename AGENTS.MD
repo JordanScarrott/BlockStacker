@@ -17,6 +17,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+**Fix Shape Rotation Bug**
+ * **Task**: Prevent shapes from rotating out of the game grid bounds.
+ * **Description**: The game crashed when a shape was rotated in a way that would move it out of bounds. The fix involved moving the rotation logic from the `Shape` class to the `Scene` class. The new logic in `Scene` now checks if a rotation is valid (i.e., within the grid boundaries and not colliding with other blocks) before applying it. This prevents the crash and makes the game more stable. Affected files: `src/main/java/com/jordan/blockstacker/shape/Shape.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/test/java/com/jordan/blockstacker/shape/ShapeTest.java`, `src/test/java/com/jordan/blockstacker/SceneTest.java`.
+ * **Status**: Completed
+---
 **Add Score Counter**
  * **Task**: Add an in-game score counter.
  * **Description**: Added a score counter to the game. The score increases by 10 points for each cleared line. The score is displayed in the top-left corner of the screen. Affected files: `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Display.java`.
