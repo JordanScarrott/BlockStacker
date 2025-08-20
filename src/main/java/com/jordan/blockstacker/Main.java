@@ -14,6 +14,7 @@ public class Main extends JFrame {
     private final Scene scene;
     private final GameLoop gameLoop;
     private final GameInputHandler inputHandler;
+    private final GameTicker gameTicker;
 
     public Main() {
         super("BlockStacker");
@@ -24,7 +25,10 @@ public class Main extends JFrame {
         scene = new Scene();
         display = new Display(scene);
         inputHandler = new GameInputHandler(scene, display);
-        gameLoop = new GameLoop(scene, display);
+        gameTicker = new GameTicker();
+        gameTicker.register(scene);
+        gameLoop = new GameLoop(gameTicker, display);
+
 
         // Add the key listener to the display panel
         display.addKeyListener(inputHandler);

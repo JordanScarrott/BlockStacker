@@ -6,10 +6,11 @@ import com.jordan.blockstacker.shape.Shape;
 
 import java.util.Random;
 
-public class Scene {
+public class Scene implements Updatable {
 
     private final Block[][] grid;
     private int score = 0;
+    private long timeAccumulator = 0;
     private Shape activeShape;
     private final Random rand = new Random();
 
@@ -171,5 +172,15 @@ public class Scene {
 
     public int getScore() {
         return score;
+    }
+
+    @Override
+    public void update(long deltaTime) {
+        timeAccumulator += deltaTime;
+
+        if (timeAccumulator >= GameConstants.GAME_SPEED_MS) {
+            step();
+            timeAccumulator -= GameConstants.GAME_SPEED_MS;
+        }
     }
 }
