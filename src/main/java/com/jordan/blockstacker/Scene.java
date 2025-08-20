@@ -1,6 +1,7 @@
 package com.jordan.blockstacker;
 
 import com.jordan.blockstacker.core.MyVector;
+import com.jordan.blockstacker.effects.ParticleManager;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 
@@ -9,13 +10,15 @@ import java.util.Random;
 public class Scene implements Updatable {
 
     private final Block[][] grid;
+    private final ParticleManager particleManager;
     private int score = 0;
     private long timeAccumulator = 0;
     private Shape activeShape;
     private final Random rand = new Random();
 
-    public Scene() {
+    public Scene(ParticleManager particleManager) {
         this.grid = new Block[GameConstants.GRID_DIMENSION][GameConstants.GRID_DIMENSION];
+        this.particleManager = particleManager;
         spawnNewShape();
     }
 
@@ -121,7 +124,10 @@ public class Scene implements Updatable {
 
     private void clearRow(int row) {
         for (int i = 0; i < GameConstants.GRID_DIMENSION; i++) {
-            grid[i][row] = null;
+            if (grid[i][row] != null) {
+                particleManager.spawnParticles(grid[i][row].location, grid[i][row].getBlockColor());
+                grid[i][row] = null;
+            }
         }
         System.out.println("Row " + row + " cleared!");
     }

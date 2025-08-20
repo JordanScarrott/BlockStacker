@@ -1,8 +1,9 @@
 package com.jordan.blockstacker;
 
+import com.jordan.blockstacker.effects.ParticleManager;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main extends JFrame {
@@ -15,6 +16,7 @@ public class Main extends JFrame {
     private final GameLoop gameLoop;
     private final GameInputHandler inputHandler;
     private final GameTicker gameTicker;
+    private final ParticleManager particleManager;
 
     public Main() {
         super("BlockStacker");
@@ -22,11 +24,13 @@ public class Main extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         // Create the game components
-        scene = new Scene();
-        display = new Display(scene);
+        particleManager = new ParticleManager();
+        scene = new Scene(particleManager);
+        display = new Display(scene, particleManager);
         inputHandler = new GameInputHandler(scene, display);
         gameTicker = new GameTicker();
         gameTicker.register(scene);
+        gameTicker.register(particleManager);
         gameLoop = new GameLoop(gameTicker, display);
 
 
