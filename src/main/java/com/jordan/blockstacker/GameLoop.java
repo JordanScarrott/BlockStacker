@@ -2,13 +2,13 @@ package com.jordan.blockstacker;
 
 public class GameLoop implements Runnable {
 
-    private final Scene scene;
+    private final GameTicker gameTicker;
     private final Display display;
     private volatile boolean running = true;
     private final Thread gameThread;
 
-    public GameLoop(Scene scene, Display display) {
-        this.scene = scene;
+    public GameLoop(GameTicker gameTicker, Display display) {
+        this.gameTicker = gameTicker;
         this.display = display;
         this.gameThread = new Thread(this);
     }
@@ -31,20 +31,25 @@ public class GameLoop implements Runnable {
 
     @Override
     public void run() {
+        long lastTime = System.nanoTime();
+
         while (running) {
+            long now = System.nanoTime();
+            long deltaTime = now - lastTime;
+            lastTime = now;
+
+            gameTicker.tick(deltaTime / 1_000_000); // Convert nanoseconds to milliseconds
+            display.repaint();
+
             try {
-                Thread.sleep(GameConstants.GAME_SPEED_MS);
+                // Sleep for a short period to yield CPU time
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 if (!running) {
-                    // Exit loop if stop() was called
                     break;
                 }
-                e.printStackTrace();
-                // Preserve the interrupted status
                 Thread.currentThread().interrupt();
             }
-            scene.step();
-            display.repaint();
         }
     }
 }

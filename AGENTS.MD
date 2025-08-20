@@ -17,6 +17,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+**Refactor Game Loop for Variable-Rate Updates**
+ * **Task**: Improve the main game loop to support updating game components at different rates.
+ * **Description**: The original game loop used a fixed `Thread.sleep()`, making it difficult to incorporate features like particle effects that need to update faster than the main game logic. The loop has been refactored to a variable-timestep model. An `Updatable` interface and a `GameTicker` class were introduced to manage game components. The `GameLoop` now calculates delta time and uses the `GameTicker` to update all registered `Updatable` components, allowing for different update frequencies. Affected files: `src/main/java/com/jordan/blockstacker/Main.java`, `src/main/java/com/jordan/blockstacker/GameLoop.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Updatable.java`, `src/main/java/com/jordan/blockstacker/GameTicker.java`.
+ * **Status**: Completed
+---
 **Fix Shape Rotation Bug**
  * **Task**: Prevent shapes from rotating out of the game grid bounds.
  * **Description**: The game crashed when a shape was rotated in a way that would move it out of bounds. The fix involved moving the rotation logic from the `Shape` class to the `Scene` class. The new logic in `Scene` now checks if a rotation is valid (i.e., within the grid boundaries and not colliding with other blocks) before applying it. This prevents the crash and makes the game more stable. Affected files: `src/main/java/com/jordan/blockstacker/shape/Shape.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/test/java/com/jordan/blockstacker/shape/ShapeTest.java`, `src/test/java/com/jordan/blockstacker/SceneTest.java`.
@@ -61,7 +66,10 @@ This section contains important information to help future AI agents understand 
 ### 2. Core Architecture
  * **Main.java**: The main entry point of the application. It creates and configures the game window.
  * **Display.java**: The main `JFrame` for the game. It handles rendering the game state (the grid and the pieces) and listens for keyboard input.
- * **Scene.java**: Contains the core game logic, including managing the game board, handling piece movement, collision detection, and clearing completed lines.
+ * **GameLoop.java**: Manages the main game loop. It calculates the time between frames (delta time) and triggers the `GameTicker`.
+ * **GameTicker.java**: Manages a list of `Updatable` components. On each tick from the `GameLoop`, it calls the `update()` method on all registered components.
+ * **Updatable.java**: An interface for game components that need to be updated on each frame. It has a single method, `update(long deltaTime)`.
+ * **Scene.java**: Contains the core game logic, including managing the game board, handling piece movement, collision detection, and clearing completed lines. It implements the `Updatable` interface to update the game state at a fixed interval.
  * **shape/**: This package contains classes related to the Tetris pieces.
     *   `Shape.java`: Defines the structure and behavior of a Tetris piece (like I, O, T, L, J blocks), including rotation.
     *   `Block.java`: Represents a single square block, which is the basic building unit of a shape.
