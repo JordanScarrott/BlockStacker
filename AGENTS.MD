@@ -17,6 +17,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+**Add Particle Effect for Line Clears**
+ * **Task**: Add a particle effect that triggers when a line of blocks is cleared.
+ * **Description**: Implemented a particle system to create a visual effect when a line is cleared. Created `Particle` and `ParticleManager` classes to manage particle state and animation. The `ParticleManager` is an `Updatable` component that runs on its own timer, separate from the main game logic, for smooth animation. The effect is triggered in `Scene.java` when a row is cleared and rendered in `Display.java`. Affected files: `src/main/java/com/jordan/blockstacker/effects/Particle.java`, `src/main/java/com/jordan/blockstacker/effects/ParticleManager.java`, `src/main/java/com/jordan/blockstacker/Main.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Display.java`.
+ * **Status**: Completed
+---
 **Refactor Game Loop for Variable-Rate Updates**
  * **Task**: Improve the main game loop to support updating game components at different rates.
  * **Description**: The original game loop used a fixed `Thread.sleep()`, making it difficult to incorporate features like particle effects that need to update faster than the main game logic. The loop has been refactored to a variable-timestep model. An `Updatable` interface and a `GameTicker` class were introduced to manage game components. The `GameLoop` now calculates delta time and uses the `GameTicker` to update all registered `Updatable` components, allowing for different update frequencies. Affected files: `src/main/java/com/jordan/blockstacker/Main.java`, `src/main/java/com/jordan/blockstacker/GameLoop.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Updatable.java`, `src/main/java/com/jordan/blockstacker/GameTicker.java`.

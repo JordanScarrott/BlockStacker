@@ -1,5 +1,6 @@
 package com.jordan.blockstacker;
 
+import com.jordan.blockstacker.effects.ParticleManager;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 
@@ -9,11 +10,13 @@ import java.awt.*;
 public class Display extends JPanel {
 
     private final Scene scene;
+    private final ParticleManager particleManager;
     private int blockWidth;
     private int blockHeight;
 
-    public Display(Scene scene) {
+    public Display(Scene scene, ParticleManager particleManager) {
         this.scene = scene;
+        this.particleManager = particleManager;
         setFocusable(true);
     }
 
@@ -28,6 +31,8 @@ public class Display extends JPanel {
         drawBackground(g);
         drawAllBlocks(g);
         drawActiveShape(g);
+        // Render particles on top of the blocks but under the grid lines and score
+        particleManager.render(g, blockWidth, blockHeight);
         drawGrid(g);
         drawScore(g);
     }

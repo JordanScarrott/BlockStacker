@@ -1,6 +1,7 @@
 package com.jordan.blockstacker;
 
 import com.jordan.blockstacker.core.MyVector;
+import com.jordan.blockstacker.effects.ParticleManager;
 import com.jordan.blockstacker.shape.Block;
 import com.jordan.blockstacker.shape.Shape;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +15,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SceneTest {
 
     private Scene scene;
+    private ParticleManager particleManager;
     private final int GRID_SIZE = GameConstants.GRID_DIMENSION;
 
     @BeforeEach
     void setUp() {
-        scene = new Scene();
+        particleManager = new ParticleManager();
+        scene = new Scene(particleManager);
     }
 
     @Test
