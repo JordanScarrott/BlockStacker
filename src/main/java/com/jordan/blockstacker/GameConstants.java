@@ -16,6 +16,8 @@ public final class GameConstants {
     // Game loop speed in milliseconds
     public static final int GAME_SPEED_MS = 750;
 
+    public static final int BOMB_CHANCE_PERCENT = 5;
+
     // Keyboard controls
     public static final char MOVE_LEFT_KEY = 'a';
     public static final char MOVE_RIGHT_KEY = 'd';
