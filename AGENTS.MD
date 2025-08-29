@@ -17,6 +17,11 @@ This is a chronological log of major tasks performed by the AI. Each significant
  * **Description**: A more detailed explanation of the work that was done and the files that were affected.
  * **Status**: (e.g., Completed, In Progress)
 ---
+**Add Bomb Block Game Rule**
+ * **Task**: Add a new game rule where blocks can become bombs and explode.
+ * **Description**: Implemented the "Bomb Block" feature. Blocks now have a chance to become bombs when they are placed. A bomb block flashes for a few seconds and then explodes, clearing a 3x3 area of surrounding blocks. Affected files: `src/main/java/com/jordan/blockstacker/shape/Block.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/GameConstants.java`, `src/test/java/com/jordan/blockstacker/BombBlockTest.java`, `GAME_RULES.md`.
+ * **Status**: Completed
+---
 **Refactor Game Loop for Variable-Rate Updates**
  * **Task**: Improve the main game loop to support updating game components at different rates.
  * **Description**: The original game loop used a fixed `Thread.sleep()`, making it difficult to incorporate features like particle effects that need to update faster than the main game logic. The loop has been refactored to a variable-timestep model. An `Updatable` interface and a `GameTicker` class were introduced to manage game components. The `GameLoop` now calculates delta time and uses the `GameTicker` to update all registered `Updatable` components, allowing for different update frequencies. Affected files: `src/main/java/com/jordan/blockstacker/Main.java`, `src/main/java/com/jordan/blockstacker/GameLoop.java`, `src/main/java/com/jordan/blockstacker/Scene.java`, `src/main/java/com/jordan/blockstacker/Updatable.java`, `src/main/java/com/jordan/blockstacker/GameTicker.java`.

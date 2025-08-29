@@ -46,6 +46,11 @@ public class Scene implements Updatable {
             if (isWithinBounds(x, y)) {
                 grid[x][y] = new Block(x, y);
                 grid[x][y].setBlockColor(b.getBlockColor());
+
+                // Chance to become a bomb
+                if (rand.nextInt(100) < GameConstants.BOMB_CHANCE_PERCENT) {
+                    grid[x][y].makeBomb();
+                }
             }
         }
     }
@@ -181,6 +186,34 @@ public class Scene implements Updatable {
         if (timeAccumulator >= GameConstants.GAME_SPEED_MS) {
             step();
             timeAccumulator -= GameConstants.GAME_SPEED_MS;
+        }
+
+        handleBombs();
+    }
+
+    private void handleBombs() {
+        for (int i = 0; i < GameConstants.GRID_DIMENSION; i++) {
+            for (int j = 0; j < GameConstants.GRID_DIMENSION; j++) {
+                Block block = grid[i][j];
+                if (block != null && block.isBomb()) {
+                    if (System.currentTimeMillis() - block.getBombActivationTime() > Block.BOMB_COUNTDOWN_MS) {
+                        explodeBomb(i, j);
+                    }
+                }
+            }
+        }
+    }
+
+    private void explodeBomb(int x, int y) {
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                int newX = x + i;
+                int newY = y + j;
+
+                if (isWithinBounds(newX, newY)) {
+                    grid[newX][newY] = null;
+                }
+            }
         }
     }
 }

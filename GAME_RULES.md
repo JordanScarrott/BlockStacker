@@ -44,3 +44,8 @@ Players can manipulate the currently falling shape using the following controls:
 
 *   The game ends when a new shape is spawned, but its starting position is already obstructed by locked blocks on the grid.
 *   This typically happens when the stack of blocks reaches the top of the board where new pieces spawn.
+
+## 8. Bomb Blocks
+
+*   With each step through the main game loop there is a chance that one of the blocks at the bottom of the screen becomes a bomb block.
+*   After a few seconds of flashing it will explode, clearing blocks surrounding it (a maximum of 9 blocks cleared including the block itself and the 8 closest surrounding blocks).

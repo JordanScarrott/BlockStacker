@@ -11,6 +11,9 @@ public class Block {
 
     public MyVector location;
     private Color blockColor;
+    private boolean isBomb = false;
+    private long bombActivationTime = 0;
+    public static final long BOMB_COUNTDOWN_MS = 3000; // 3 seconds
 
     // Constructor
     public Block(int x, int y) {
@@ -20,6 +23,14 @@ public class Block {
 
     // Getters and Setters
     public Color getBlockColor() {
+        if (isBomb) {
+            // Flashing effect for the bomb
+            if ((System.currentTimeMillis() / 200) % 2 == 0) {
+                return Color.RED;
+            } else {
+                return Color.YELLOW;
+            }
+        }
         return blockColor;
     }
 
@@ -33,5 +44,18 @@ public class Block {
 
     public void setLocation(MyVector location) {
         this.location = location;
+    }
+
+    public void makeBomb() {
+        this.isBomb = true;
+        this.bombActivationTime = System.currentTimeMillis();
+    }
+
+    public boolean isBomb() {
+        return isBomb;
+    }
+
+    public long getBombActivationTime() {
+        return bombActivationTime;
     }
 }
