@@ -15,9 +15,13 @@ public class GameTicker {
         this.updatables.remove(updatable);
     }
 
-    public void tick(long deltaTime) {
+    public boolean tick(long deltaTime) {
+        boolean anyUpdated = false;
         for (Updatable updatable : updatables) {
-            updatable.update(deltaTime);
+            if (updatable.update(deltaTime)) {
+                anyUpdated = true;
+            }
         }
+        return anyUpdated;
     }
 }

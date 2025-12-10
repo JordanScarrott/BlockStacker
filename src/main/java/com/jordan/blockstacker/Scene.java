@@ -175,12 +175,14 @@ public class Scene implements Updatable {
     }
 
     @Override
-    public void update(long deltaTime) {
+    public boolean update(long deltaTime) {
         timeAccumulator += deltaTime;
 
         if (timeAccumulator >= GameConstants.GAME_SPEED_MS) {
             step();
             timeAccumulator -= GameConstants.GAME_SPEED_MS;
+            return true;
         }
+        return false;
     }
 }
