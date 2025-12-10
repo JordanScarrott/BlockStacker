@@ -38,8 +38,9 @@ public class GameLoop implements Runnable {
             long deltaTime = now - lastTime;
             lastTime = now;
 
-            gameTicker.tick(deltaTime / 1_000_000); // Convert nanoseconds to milliseconds
-            display.repaint();
+            if (gameTicker.tick(deltaTime / 1_000_000)) { // Convert nanoseconds to milliseconds
+                display.repaint();
+            }
 
             try {
                 // Sleep for a short period to yield CPU time
