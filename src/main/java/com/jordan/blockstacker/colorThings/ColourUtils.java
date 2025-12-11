@@ -8,40 +8,22 @@ import java.util.Random;
  */
 public abstract class ColourUtils {
 
+    private static final Random RANDOM = new Random();
+    // Cache colors to avoid unnecessary object creation
+    private static final Color[] COLORS = new Color[]{
+            new Color(148, 40, 30),
+            new Color(62, 151, 56),
+            new Color(44, 68, 147),
+            new Color(204, 120, 50),
+            new Color(207, 214, 57),
+            new Color(91, 0, 183) // Purple
+    };
+
     /**
      * @return A random colorThings
      */
     public static Color randomColour() {
-        Color colour = null;
-        Random rand = new Random();
-        int choice = rand.nextInt(6);
-
-        switch (choice) {
-            case 0:
-                colour = new Color(148, 40, 30);
-                break;
-            case 1:
-                colour = new Color(62, 151, 56);
-                break;
-            case 2:
-                colour = new Color(44, 68, 147);
-                break;
-            case 3:
-                colour = new Color(204, 120, 50);
-                break;
-            case 4:
-                colour = new Color(207, 214, 57);
-                break;
-            case 5:
-                // Purple
-                colour = new Color(91, 0, 183);
-                break;
-            default:
-                System.out.println("asdfasdfasdf");
-        }
-
-        assert colour != null;
-        return colour;
+        return COLORS[RANDOM.nextInt(COLORS.length)];
     }
 
 }
