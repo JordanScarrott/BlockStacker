@@ -32,16 +32,15 @@ public class Shape {
         }
     }
 
+    private static final Random RANDOM = new Random();
+    // Cache shape types for efficient random selection
+    private static final int[][] SHAPE_TYPES = new int[][]{
+            L_BLOCK, J_BLOCK, I_BLOCK, O_BLOCK, T_BLOCK
+    };
+
     public static int[] randomShapeType() {
-        Random rand = new Random();
-        switch (rand.nextInt(5)) {
-            case 0: return L_BLOCK;
-            case 1: return J_BLOCK;
-            case 2: return I_BLOCK;
-            case 3: return O_BLOCK;
-            case 4: return T_BLOCK;
-            default: return T_BLOCK; // Default case
-        }
+        // Reuse Random instance and array lookup to avoid object creation
+        return SHAPE_TYPES[RANDOM.nextInt(SHAPE_TYPES.length)];
     }
 
     public boolean addBlockCoordinates(int... a) {
