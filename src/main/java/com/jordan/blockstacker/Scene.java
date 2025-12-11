@@ -20,7 +20,7 @@ public class Scene implements Updatable {
     }
 
     public void step() {
-        step(new MyVector(0, 1));
+        step(GameConstants.VECTOR_DOWN);
     }
 
     public void step(MyVector movement) {
@@ -80,22 +80,30 @@ public class Scene implements Updatable {
     public void rotateActiveShape() {
         if (activeShape == null) return;
 
-        // Create a temporary rotated shape to check for validity
-        Shape testShape = new Shape(activeShape.location.copy(), activeShape.getShapeType());
-        testShape.setBlocksInThisShape(activeShape.getBlocksInThisShape());
-
-        // Perform a test rotation
-        testShape.rotateShapeOnly();
-
-        if (isRotationValid(testShape)) {
+        if (canRotate(activeShape)) {
             activeShape.rotateShapeOnly();
         }
     }
 
-    private boolean isRotationValid(Shape shape) {
+    private boolean canRotate(Shape shape) {
+        float centerX = shape.location.x;
+        float centerY = shape.location.y;
+
         for (Block b : shape.getBlocksInThisShape()) {
-            int x = (int) Math.round(b.location.x);
-            int y = (int) Math.round(b.location.y);
+            // Rel to center
+            float relX = b.location.x - centerX;
+            float relY = b.location.y - centerY;
+
+            // Rotate 90 deg: x' = -y, y' = x
+            float rotatedRelX = -relY;
+            float rotatedRelY = relX;
+
+            // Abs pos
+            float finalX = rotatedRelX + centerX;
+            float finalY = rotatedRelY + centerY;
+
+            int x = Math.round(finalX);
+            int y = Math.round(finalY);
 
             if (!isWithinBounds(x, y)) {
                 return false; // Out of bounds
@@ -138,9 +146,8 @@ public class Scene implements Updatable {
 
     public boolean shapeCanMove(Shape shape, MyVector movement) {
         for (Block b : shape.getBlocksInThisShape()) {
-            MyVector nextPos = MyVector.add(b.location, movement);
-            int x = (int) nextPos.x;
-            int y = (int) nextPos.y;
+            int x = (int) (b.location.x + movement.x);
+            int y = (int) (b.location.y + movement.y);
 
             if (!isWithinBounds(x,y)) {
                 return false;

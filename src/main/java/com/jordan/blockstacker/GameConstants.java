@@ -1,5 +1,7 @@
 package com.jordan.blockstacker;
 
+import com.jordan.blockstacker.core.MyVector;
+
 import java.awt.event.KeyEvent;
 
 public final class GameConstants {
@@ -21,4 +23,9 @@ public final class GameConstants {
     public static final char MOVE_RIGHT_KEY = 'd';
     public static final char MOVE_DOWN_KEY = 's';
     public static final char ROTATE_KEY = 'q';
+
+    // Vector constants
+    public static final MyVector VECTOR_DOWN = new MyVector(0, 1);
+    public static final MyVector VECTOR_LEFT = new MyVector(-1, 0);
+    public static final MyVector VECTOR_RIGHT = new MyVector(1, 0);
 }

@@ -26,13 +26,13 @@ public class GameInputHandler implements KeyListener {
         boolean needsRepaint = false;
 
         if (keyChar == GameConstants.MOVE_LEFT_KEY) {
-            scene.moveActiveShape(new MyVector(-1, 0));
+            scene.moveActiveShape(GameConstants.VECTOR_LEFT);
             needsRepaint = true;
         } else if (keyChar == GameConstants.MOVE_RIGHT_KEY) {
-            scene.moveActiveShape(new MyVector(1, 0));
+            scene.moveActiveShape(GameConstants.VECTOR_RIGHT);
             needsRepaint = true;
         } else if (keyChar == GameConstants.MOVE_DOWN_KEY) {
-            scene.step(new MyVector(0, 1));
+            scene.step(GameConstants.VECTOR_DOWN);
             needsRepaint = true;
         } else if (keyChar == GameConstants.ROTATE_KEY) {
             scene.rotateActiveShape();
